@@ -2,13 +2,63 @@
 
 A full-stack application with a Node.js/Express backend, React frontend, and Python MCP server for AI assistant integration.
 
+## MCP Server Quick Start
+
+This project includes a **Python-based MCP (Model Context Protocol) server** in the `mcp/` directory that allows AI assistants like Claude Desktop and ChatGPT to interact with the ShellFusion backend.
+
+### Available Tools
+
+- **health_check** - Check backend health status
+- **list_items** - List all items from the backend
+- **create_item** - Create new items
+
+### Setup & Run
+
+1. **Install dependencies**:
+
+```bash
+cd mcp
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+2. **Run the server** (for testing with Inspector):
+
+```bash
+mcp dev server.py
+```
+
+3. **Configure for Claude Desktop**:
+
+Add to `~/.config/Claude/claude_desktop_config.json` (Linux) or `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+
+```json
+{
+  "mcpServers": {
+    "shellfusion": {
+      "command": "/absolute/path/to/ShellFusion-mcp-server/mcp/.venv/bin/python",
+      "args": ["server.py"],
+      "env": {
+        "BACKEND_BASE_URL": "http://localhost:4000"
+      }
+    }
+  }
+}
+```
+
+Replace `/absolute/path/to/ShellFusion-mcp-server/mcp/` with your actual path. Then restart Claude Desktop.
+
+**Note**: Make sure your backend is running on port 4000 before using the MCP server.
+
+---
+
 ## Prerequisites
 
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
 - **Docker** and **Docker Compose**
 - **Python** (3.10 or higher) - for MCP server
-- **uv** - Python package manager (optional but recommended for MCP server)
 
 ## Local Development Setup
 
@@ -74,66 +124,3 @@ npm run lint
 npm run format
 ```
 
-## MCP Server for AI Integration
-
-This project includes a Python-based MCP (Model Context Protocol) server that allows AI assistants like Claude and ChatGPT to interact with the ShellFusion backend.
-
-### Features
-
-The MCP server exposes tools to:
-- Check backend health status
-- List all items from the backend
-- Create new items
-
-### Quick Start
-
-1. **Install MCP dependencies**:
-
-```bash
-cd mcp
-uv sync  # or: pip install -e .
-```
-
-2. **Configure environment** (optional):
-
-```bash
-cd mcp
-cp .env.example .env
-# Edit .env if your backend runs on a different URL
-```
-
-3. **Run the MCP server**:
-
-```bash
-cd mcp
-uv run mcp dev server.py
-```
-
-### Integration with Claude Desktop
-
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
-
-```json
-{
-  "mcpServers": {
-    "shellfusion": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/absolute/path/to/ShellFusion-mcp-server/mcp",
-        "run",
-        "mcp",
-        "run",
-        "server.py"
-      ],
-      "env": {
-        "BACKEND_BASE_URL": "http://localhost:4000"
-      }
-    }
-  }
-}
-```
-
-**Note**: Replace `/absolute/path/to/ShellFusion-mcp-server/mcp` with your actual path.
-
-For detailed MCP server documentation, see [mcp/README.md](mcp/README.md).
