@@ -246,4 +246,41 @@ router.patch("/tickets/:id", async (req: Request, res: Response) => {
   }
 });
 
+// DELETE (DELETE)
+// DELETE /api/tickets/:id - Eliminar un ticket
+router.delete("/tickets/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+ 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ticket ID format",
+      });
+    }
+ 
+    const deletedTicket = await Ticket.findByIdAndDelete(id);
+ 
+    if (!deletedTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+ 
+    res.status(200).json({
+      success: true,
+      message: "Ticket deleted successfully",
+      data: deletedTicket,
+    });
+  } catch (err: any) {
+    console.error("Error deleting ticket:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+});
+
 export default router;
