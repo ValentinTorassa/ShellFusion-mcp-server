@@ -132,6 +132,7 @@ router.get("/tickets", async (req: Request, res: Response) => {
     });
   }
 });
+
  // READ ONE (GET)
 // GET /api/tickets/:id - Obtener un ticket por ID
 router.get("/tickets/:id", async (req: Request, res: Response) => {
@@ -162,6 +163,81 @@ router.get("/tickets/:id", async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error("Error fetching ticket:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+});
+
+// UPDATE (PATCH) 
+// PATCH /api/tickets/:id - Actualizar un ticket
+router.patch("/tickets/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+ 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ticket ID format",
+      });
+    }
+ 
+    // Validar datos con Joi
+    const { error, value } = updateTicketSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        details: error.details.map((detail) => detail.message),
+      });
+    }
+ 
+    // Preparar datos para actualizar
+    const updateData: any = {};
+    if (value.title !== undefined) updateData.title = value.title;
+    if (value.description !== undefined) updateData.description = value.description;
+    if (value.status !== undefined) updateData.status = value.status;
+    if (value.priority !== undefined) updateData.priority = value.priority;
+    if (value.tags !== undefined) updateData.tags = value.tags;
+ 
+    if (value.assignedTo !== undefined) {
+      if (value.assignedTo === null || value.assignedTo === "") {
+        updateData.assignedTo = null;
+      } else if (mongoose.Types.ObjectId.isValid(value.assignedTo)) {
+        updateData.assignedTo = new mongoose.Types.ObjectId(value.assignedTo);
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid assignedTo format",
+        });
+      }
+    }
+ 
+    // Actualizar el ticket
+    const updatedTicket = await Ticket.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    )
+      .populate("createdBy", "email")
+      .populate("assignedTo", "email");
+ 
+    if (!updatedTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+ 
+    res.status(200).json({
+      success: true,
+      message: "Ticket updated successfully",
+      data: updatedTicket,
+    });
+  } catch (err: any) {
+    console.error("Error updating ticket:", err);
     res.status(500).json({
       success: false,
       message: "Internal server error",
