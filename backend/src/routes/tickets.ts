@@ -64,4 +64,74 @@ router.post("/tickets", async (req: Request, res: Response) => {
   }
 });
 
+// READ ALL (GET)
+// GET /api/tickets - Obtener todos los tickets con filtros opcionales
+router.get("/tickets", async (req: Request, res: Response) => {
+  try {
+    const {
+      status,
+      priority,
+      assignedTo,
+      createdBy,
+      page = "1",
+      limit = "10",
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = req.query;
+ 
+    // Construir filtros
+    const filter: any = {};
+    if (status) filter.status = status;
+    if (priority) filter.priority = priority;
+    if (assignedTo) {
+      if (mongoose.Types.ObjectId.isValid(assignedTo as string)) {
+        filter.assignedTo = new mongoose.Types.ObjectId(assignedTo as string);
+      }
+    }
+    if (createdBy) {
+      if (mongoose.Types.ObjectId.isValid(createdBy as string)) {
+        filter.createdBy = new mongoose.Types.ObjectId(createdBy as string);
+      }
+    }
+ 
+    // Paginación
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const skip = (pageNum - 1) * limitNum;
+ 
+    // Ordenamiento
+    const sort: any = {};
+    sort[sortBy as string] = sortOrder === "asc" ? 1 : -1;
+ 
+    // Ejecutar consulta
+    const tickets = await Ticket.find(filter)
+      .populate("createdBy", "email")
+      .populate("assignedTo", "email")
+      .sort(sort)
+      .skip(skip)
+      .limit(limitNum);
+ 
+    const total = await Ticket.countDocuments(filter);
+ 
+    res.status(200).json({
+      success: true,
+      data: tickets,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    });
+  } catch (err: any) {
+    console.error("Error fetching tickets:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+});
+ 
+
 export default router;
