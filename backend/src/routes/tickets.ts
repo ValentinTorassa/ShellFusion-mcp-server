@@ -132,6 +132,42 @@ router.get("/tickets", async (req: Request, res: Response) => {
     });
   }
 });
+ // READ ONE (GET)
+// GET /api/tickets/:id - Obtener un ticket por ID
+router.get("/tickets/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ticket ID format",
+      });
+    }
+ 
+    const ticket = await Ticket.findById(id)
+      .populate("createdBy", "email")
+      .populate("assignedTo", "email");
+ 
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+ 
+    res.status(200).json({
+      success: true,
+      data: ticket,
+    });
+  } catch (err: any) {
+    console.error("Error fetching ticket:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+});
 
 export default router;
