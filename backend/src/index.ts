@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import itemsRouter from './routes/items';
 import authRouter from './routes/authRouter';
+import ticketsRouter from './routes/tickets';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', itemsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api', ticketsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
