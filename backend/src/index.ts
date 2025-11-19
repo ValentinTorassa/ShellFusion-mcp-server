@@ -3,9 +3,9 @@ import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import itemsRouter from './routes/items';
 import authRouter from './routes/authRouter';
 import ticketsRouter from './routes/tickets';
+import { apiKeyAuth } from './middlewares/apiKeyAuth';
 
 dotenv.config();
 
@@ -31,11 +31,15 @@ app.use(cors({
 app.use(morgan('combined'));
 app.use(express.json());
 
+// Health check endpoint (no API key)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use('/api', itemsRouter);
+
+app.use('/api', apiKeyAuth);
+
+
 app.use('/api/auth', authRouter);
 app.use('/api', ticketsRouter);
 

@@ -7,7 +7,7 @@ const router = Router();
  
 // CREATE POST
 // POST /api/tickets - Crear un nuevo ticket
-router.post("/tickets", async (req: Request, res: Response) => {
+router.post("/tickets", async (req: Request, res: Response): Promise<any> => {
   try {
     // Validar datos con Joi
     const { error, value } = createTicketSchema.validate(req.body);
@@ -66,7 +66,7 @@ router.post("/tickets", async (req: Request, res: Response) => {
 
 // READ ALL (GET)
 // GET /api/tickets - Obtener todos los tickets con filtros opcionales
-router.get("/tickets", async (req: Request, res: Response) => {
+router.get("/tickets", async (req: Request, res: Response): Promise<any> => {
   try {
     const {
       status,
@@ -135,7 +135,7 @@ router.get("/tickets", async (req: Request, res: Response) => {
 
  // READ ONE (GET)
 // GET /api/tickets/:id - Obtener un ticket por ID
-router.get("/tickets/:id", async (req: Request, res: Response) => {
+router.get("/tickets/:id", async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
  
@@ -171,9 +171,9 @@ router.get("/tickets/:id", async (req: Request, res: Response) => {
   }
 });
 
-// UPDATE (PATCH) 
+// UPDATE (PATCH)
 // PATCH /api/tickets/:id - Actualizar un ticket
-router.patch("/tickets/:id", async (req: Request, res: Response) => {
+router.patch("/tickets/:id", async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
  
@@ -248,7 +248,7 @@ router.patch("/tickets/:id", async (req: Request, res: Response) => {
 
 // DELETE (DELETE)
 // DELETE /api/tickets/:id - Eliminar un ticket
-router.delete("/tickets/:id", async (req: Request, res: Response) => {
+router.delete("/tickets/:id", async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
  

@@ -10,7 +10,7 @@ export const identifier = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
+): any => {
   let token: string | undefined;
 
   // Si viene de un cliente "no-browser", tomamos token de headers
