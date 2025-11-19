@@ -9,14 +9,12 @@ This server forwards the backend API key to authenticate requests,
 but does not require authentication from the LLM client itself.
 """
 
-import asyncio
 import os
 from typing import Any, Dict, List, Optional
 
 import httpx
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
-from mcp.server.stdio import stdio_server
 
 # Load environment variables from .env file
 load_dotenv()
@@ -348,13 +346,5 @@ async def delete_ticket(ticket_id: str) -> Dict[str, Any]:
         }
 
 
-async def main() -> None:
-    """
-    Main entrypoint for the MCP server (stdio transport).
-    """
-    async with stdio_server() as (read_stream, write_stream):
-        await mcp.run(read_stream, write_stream)
-
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    mcp.run(transport="stdio")
