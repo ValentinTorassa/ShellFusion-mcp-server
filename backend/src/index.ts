@@ -36,11 +36,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Rutas de autenticación (públicas, no requieren API key)
+app.use('/api/auth', authRouter);
 
+// Aplicar API key auth solo a las rutas que lo requieren
 app.use('/api', apiKeyAuth);
 
-
-app.use('/api/auth', authRouter);
+// Rutas que requieren API key
 app.use('/api', ticketsRouter);
 
 app.listen(PORT, () => {

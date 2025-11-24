@@ -1,35 +1,45 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { signup, clearError } from '../store/slices/authSlice';
+import { signupSchema } from '../utils/validationSchemas';
 import styles from './SignupForm.module.css';
 
+interface SignupFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const SignupForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useAppSelector((state) => state.auth);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    // Validación básica
-    if (!email || !password || !confirmPassword) {
-      setError('Por favor completa todos los campos');
-      return;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: joiResolver(signupSchema),
+  });
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
+  const onSubmit = async (data: SignupFormData) => {
+    try {
+      await dispatch(signup({ email: data.email, password: data.password })).unwrap();
+      // After successful signup, redirect to login
+      navigate('/login', { state: { message: 'Registro exitoso. Por favor inicia sesión.' } });
+    } catch (err) {
+      // Error is handled by Redux state
     }
-
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
-
-    if (password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres');
-      return;
-    }
-
-    // Aquí irá la lógica de registro
-    console.log('Signup:', { email, password });
   };
 
   return (
@@ -46,7 +56,7 @@ const SignupForm = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>
               Email
@@ -54,12 +64,13 @@ const SignupForm = () => {
             <input
               id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
+              {...register('email')}
+              className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
               placeholder="tu@email.com"
-              required
             />
+            {errors.email && (
+              <span className={styles.errorText}>{errors.email.message}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
@@ -69,12 +80,13 @@ const SignupForm = () => {
             <input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
+              {...register('password')}
+              className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
               placeholder="••••••••"
-              required
             />
+            {errors.password && (
+              <span className={styles.errorText}>{errors.password.message}</span>
+            )}
             <p className={styles.helpText}>
               Mínimo 8 caracteres, una mayúscula, una minúscula y un número
             </p>
@@ -87,16 +99,21 @@ const SignupForm = () => {
             <input
               id="confirmPassword"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={styles.input}
+              {...register('confirmPassword')}
+              className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
               placeholder="••••••••"
-              required
             />
+            {errors.confirmPassword && (
+              <span className={styles.errorText}>{errors.confirmPassword.message}</span>
+            )}
           </div>
 
-          <button type="submit" className={styles.submitButton}>
-            Registrarse
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={loading}
+          >
+            {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
 
@@ -117,4 +134,3 @@ const SignupForm = () => {
 };
 
 export default SignupForm;
-

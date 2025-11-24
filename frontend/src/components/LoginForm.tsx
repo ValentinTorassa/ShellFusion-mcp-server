@@ -1,24 +1,49 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { signin, clearError } from '../store/slices/authSlice';
+import { signinSchema } from '../utils/validationSchemas';
 import styles from './LoginForm.module.css';
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error, isAuthenticated } = useAppSelector((state) => state.auth);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    // Validación básica
-    if (!email || !password) {
-      setError('Por favor completa todos los campos');
-      return;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: joiResolver(signinSchema),
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/tickets');
     }
+  }, [isAuthenticated, navigate]);
 
-    // Aquí irá la lógica de autenticación
-    console.log('Login:', { email, password });
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await dispatch(signin(data)).unwrap();
+      navigate('/tickets');
+    } catch (err) {
+      // Error is handled by Redux state
+    }
   };
 
   return (
@@ -35,7 +60,7 @@ const LoginForm = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>
               Email
@@ -43,12 +68,13 @@ const LoginForm = () => {
             <input
               id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
+              {...register('email')}
+              className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
               placeholder="tu@email.com"
-              required
             />
+            {errors.email && (
+              <span className={styles.errorText}>{errors.email.message}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
@@ -58,16 +84,21 @@ const LoginForm = () => {
             <input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
+              {...register('password')}
+              className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
               placeholder="••••••••"
-              required
             />
+            {errors.password && (
+              <span className={styles.errorText}>{errors.password.message}</span>
+            )}
           </div>
 
-          <button type="submit" className={styles.submitButton}>
-            Iniciar Sesión
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={loading}
+          >
+            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
 
@@ -88,4 +119,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
