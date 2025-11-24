@@ -1,0 +1,25 @@
+[Unit]
+Description=ShellFusion MCP Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/shellfusion/app/mcp
+ExecStart=/opt/shellfusion/app/mcp/.venv/bin/python server.py --http
+EnvironmentFile=/opt/shellfusion/app/mcp/.env
+Restart=on-failure
+RestartSec=5
+User=www-data
+Group=www-data
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=shellfusion-mcp
+
+[Install]
+WantedBy=multi-user.target

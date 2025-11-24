@@ -1,0 +1,96 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+
+            echo "======================================"
+            echo "Starting deployment to ShellFusion"
+            echo "======================================"
+
+            # Create app directory if it doesn't exist
+            mkdir -p /opt/shellfusion/app
+            cd /opt/shellfusion/app
+
+            # Clone or pull the repository
+            if [ -d ".git" ]; then
+              echo "Repository exists, pulling latest changes..."
+              git fetch origin
+              git reset --hard origin/main
+            else
+              echo "Cloning repository..."
+              git clone https://github.com/ValentinTorassa/ShellFusion-mcp-server.git .
+            fi
+
+            echo "======================================"
+            echo "Installing and building backend..."
+            echo "======================================"
+            cd /opt/shellfusion/app/backend
+            npm install
+            npm run build
+
+            echo "======================================"
+            echo "Installing and building frontend..."
+            echo "======================================"
+            cd /opt/shellfusion/app/frontend
+            npm install
+            npm run build
+
+            # Copy frontend build to web root
+            echo "Copying frontend build to /var/www/shellfusion-frontend..."
+            mkdir -p /var/www/shellfusion-frontend
+            cp -r dist/* /var/www/shellfusion-frontend/
+
+            echo "======================================"
+            echo "Setting up MCP Python environment..."
+            echo "======================================"
+            cd /opt/shellfusion/app/mcp
+
+            # Create virtual environment if it doesn't exist
+            if [ ! -d ".venv" ]; then
+              python3 -m venv .venv
+            fi
+
+            # Activate and install dependencies
+            source .venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            deactivate
+
+            echo "======================================"
+            echo "Setting correct permissions..."
+            echo "======================================"
+            chown -R www-data:www-data /opt/shellfusion/app
+            chown -R www-data:www-data /var/www/shellfusion-frontend
+
+            echo "======================================"
+            echo "Restarting services..."
+            echo "======================================"
+            systemctl daemon-reload
+            systemctl restart shellfusion-backend
+            systemctl restart shellfusion-mcp
+
+            echo "======================================"
+            echo "Checking service status..."
+            echo "======================================"
+            systemctl status shellfusion-backend --no-pager || true
+            systemctl status shellfusion-mcp --no-pager || true
+
+            echo "======================================"
+            echo "Deployment completed successfully!"
+            echo "======================================"

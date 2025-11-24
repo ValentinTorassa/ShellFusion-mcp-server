@@ -7,12 +7,19 @@ MCP server that exposes tools to interact with the ShellFusion backend
 
 This server forwards the backend API key to authenticate requests,
 but does not require authentication from the LLM client itself.
+
+This server can run in two modes:
+1. stdio mode (for Claude Desktop) - default when run as __main__
+2. HTTP mode (for deployment) - with health check endpoint on port 8765
 """
 
+import asyncio
 import os
+import sys
 from typing import Any, Dict, List, Optional
 
 import httpx
+from aiohttp import web
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
@@ -23,6 +30,7 @@ load_dotenv()
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:4000")
 BACKEND_API_KEY = os.getenv("BACKEND_API_KEY")
 MCP_SERVER_NAME = os.getenv("MCP_SERVER_NAME", "ShellFusion")
+HTTP_PORT = int(os.getenv("MCP_HTTP_PORT", "8765"))
 
 HTTP_TIMEOUT = 30.0
 
@@ -346,5 +354,63 @@ async def delete_ticket(ticket_id: str) -> Dict[str, Any]:
         }
 
 
+async def health_endpoint(request: web.Request) -> web.Response:
+    """
+    HTTP health check endpoint.
+    Returns server status and backend connectivity.
+    """
+    try:
+        # Check backend health
+        backend_status = await health_check()
+
+        return web.json_response({
+            "service": "ShellFusion MCP Server",
+            "status": "running",
+            "backend": backend_status,
+            "mode": "http",
+            "port": HTTP_PORT
+        })
+    except Exception as e:
+        return web.json_response({
+            "service": "ShellFusion MCP Server",
+            "status": "error",
+            "error": str(e),
+            "mode": "http",
+            "port": HTTP_PORT
+        }, status=500)
+
+
+async def run_http_server():
+    """
+    Run the HTTP server with health check endpoint.
+    This keeps the MCP server process alive and provides health monitoring.
+    """
+    app = web.Application()
+    app.router.add_get('/health', health_endpoint)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '127.0.0.1', HTTP_PORT)
+
+    print(f"🚀 ShellFusion MCP Server starting...")
+    print(f"📡 HTTP health endpoint: http://127.0.0.1:{HTTP_PORT}/health")
+    print(f"🔗 Backend URL: {BACKEND_BASE_URL}")
+
+    await site.start()
+
+    # Keep the server running indefinitely
+    try:
+        await asyncio.Event().wait()
+    except KeyboardInterrupt:
+        print("\n🛑 Shutting down HTTP server...")
+        await runner.cleanup()
+
+
 if __name__ == "__main__":
-    mcp.run(transport="stdio")
+    # Check if we should run in HTTP mode (for systemd service)
+    if len(sys.argv) > 1 and sys.argv[1] == "--http":
+        # Run HTTP server mode
+        asyncio.run(run_http_server())
+    else:
+        # Run stdio mode (for Claude Desktop)
+        mcp.run(transport="stdio")

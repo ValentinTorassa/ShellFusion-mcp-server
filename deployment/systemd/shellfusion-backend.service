@@ -1,0 +1,25 @@
+[Unit]
+Description=ShellFusion Backend API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/shellfusion/app/backend
+ExecStart=/usr/bin/node dist/index.js
+EnvironmentFile=/opt/shellfusion/app/backend/.env
+Restart=on-failure
+RestartSec=5
+User=www-data
+Group=www-data
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=shellfusion-backend
+
+[Install]
+WantedBy=multi-user.target
