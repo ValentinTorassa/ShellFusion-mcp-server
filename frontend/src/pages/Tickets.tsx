@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { signout } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { getAllTickets, getTicketById, createTicket, updateTicket } from '../services/ticketService';
+import { getAllTickets, getTicketById, createTicket, updateTicket, deleteTicket } from '../services/ticketService';
 import type { ITicket } from '../services/ticketService';
 import TicketForm from '../components/TicketForm';
+import ConfirmModal from '../components/ConfirmModal.tsx'; 
 import styles from './Tickets.module.css';
 
 const Tickets = () => {
@@ -19,6 +20,7 @@ const Tickets = () => {
   const [isFiltering, setIsFiltering] = useState(false);
   const [showTicketForm, setShowTicketForm] = useState(false);
   const [editingTicket, setEditingTicket] = useState<ITicket | null>(null);
+  const [deletingTicket, setDeletingTicket] = useState<ITicket | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
@@ -79,11 +81,35 @@ const Tickets = () => {
     setError(null);
   };
 
-  // Función para editar ticket
   const handleEditTicket = (ticket: ITicket) => {
     setEditingTicket(ticket);
     setShowTicketForm(true);
     setError(null);
+  };
+
+  const handleDeleteClick = (ticket: ITicket) => {
+    setDeletingTicket(ticket);
+    setError(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingTicket) return;
+
+    try {
+      setFormLoading(true);
+      setError(null);
+      await deleteTicket(deletingTicket._id);
+      setDeletingTicket(null);
+      await loadTickets();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Error al eliminar el ticket');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeletingTicket(null);
   };
 
   const handleFormSubmit = async (data: {
@@ -106,7 +132,7 @@ const Tickets = () => {
         : [];
 
       if (editingTicket) {
-        // Actualizar ticket existente
+        // Update ticket
         const updateData: any = {
           title: data.title,
           description: data.description,
@@ -120,12 +146,15 @@ const Tickets = () => {
           updateData.tags = [];
         }
 
-        // assignedTo siempre será null (no se permite asignar desde el formulario)
-        updateData.assignedTo = null;
+        if (data.assignedTo && data.assignedTo.trim() !== '') {
+          updateData.assignedTo = data.assignedTo.trim();
+        } else {
+          updateData.assignedTo = null;
+        }
 
         await updateTicket(editingTicket._id, updateData);
       } else {
-        // Crear nuevo ticket
+        // Create ticket
         if (!user?.userId) {
           setError('No se pudo obtener el ID del usuario');
           return;
@@ -137,7 +166,7 @@ const Tickets = () => {
           status: data.status,
           priority: data.priority,
           createdBy: user.userId,
-          assignedTo: null,
+          assignedTo: data.assignedTo && data.assignedTo.trim() !== '' ? data.assignedTo.trim() : null,
           tags: tagsArray,
         };
 
@@ -210,7 +239,7 @@ const Tickets = () => {
             Hola {user?.email || 'Usuario'}
           </h2>
           <button onClick={handleLogout} className={styles.logoutButton}>
-            Cerrar Sesión
+            Cerrar SesiÃ³n
           </button>
         </div>
       </nav>
@@ -325,13 +354,18 @@ const Tickets = () => {
                       </div>
                     )}
                   </div>
-                  {/* Botón de Editar */}
                   <div className={styles.ticketActions}>
                     <button
                       onClick={() => handleEditTicket(ticket)}
                       className={styles.editButton}
                     >
                       Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(ticket)}
+                      className={styles.deleteButton}
+                    >
+                      Eliminar
                     </button>
                   </div>
                 </div>
@@ -348,6 +382,19 @@ const Tickets = () => {
           onSubmit={handleFormSubmit}
           onCancel={handleCancelForm}
           loading={formLoading}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingTicket && (
+        <ConfirmModal
+          isOpen={!!deletingTicket}
+          title="Confirmar EliminaciÃ³n"
+          message={`Â¿EstÃ¡ seguro de que desea eliminar el ticket "${deletingTicket.title}"? Esta acciÃ³n no se puede deshacer.`}
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
         />
       )}
     </div>

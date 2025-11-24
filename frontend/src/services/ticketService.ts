@@ -76,3 +76,13 @@ export const updateTicket = async (id: string, data: UpdateTicketData): Promise<
   const response = await api.patch<TicketResponse>(`/api/tickets/${id}`, data);
   return response.data.data;
 };
+
+interface DeleteTicketResponse {
+  success: boolean;
+  message: string;
+  data: ITicket;
+}
+
+export const deleteTicket = async (id: string): Promise<void> => {
+  await api.delete<DeleteTicketResponse>(`/api/tickets/${id}`);
+};
