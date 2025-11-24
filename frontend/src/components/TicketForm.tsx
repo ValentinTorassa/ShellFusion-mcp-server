@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
-import { createTicketSchema, } from '../utils/validationSchemas';
+import { createTicketSchema, updateTicketSchema } from '../utils/validationSchemas';
 import type { ITicket } from '../services/ticketService';
 import styles from './TicketForm.module.css';
 
@@ -22,7 +22,7 @@ interface TicketFormProps {
 
 const TicketForm = ({ ticket, onSubmit, onCancel, loading = false }: TicketFormProps) => {
   const isEditing = !!ticket;
-  const schema = isEditing ? createTicketSchema : createTicketSchema;
+  const schema = isEditing ? updateTicketSchema : createTicketSchema;
 
   const {
     register,

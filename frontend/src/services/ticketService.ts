@@ -45,6 +45,8 @@ export const getTicketById = async (id: string): Promise<ITicket> => {
   return response.data.data;
 };
 
+//create ticket service
+
 interface CreateTicketData {
   title: string;
   description: string;
@@ -54,7 +56,23 @@ interface CreateTicketData {
   tags?: string[];
   createdBy: string;
 }
+
+//update ticket service
+interface UpdateTicketData {
+  title?: string;
+  description?: string;
+  status?: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  assignedTo?: string | null;
+  tags?: string[];
+}
+
 export const createTicket = async (data: CreateTicketData): Promise<ITicket> => {
   const response = await api.post<TicketResponse>('/api/tickets', data);
+  return response.data.data;
+};
+
+export const updateTicket = async (id: string, data: UpdateTicketData): Promise<ITicket> => {
+  const response = await api.patch<TicketResponse>(`/api/tickets/${id}`, data);
   return response.data.data;
 };

@@ -92,3 +92,43 @@ export const createTicketSchema = Joi.object({
   ...baseTicketFields,
 });
 
+//Validación para actualizar un ticket
+export const updateTicketSchema = Joi.object({
+  title: Joi.string().min(3).max(200).messages({
+    'string.min': 'El título debe tener al menos 3 caracteres',
+    'string.max': 'El título no puede tener más de 200 caracteres',
+  }),
+  description: Joi.string().min(10).max(2000).messages({
+    'string.min': 'La descripción debe tener al menos 10 caracteres',
+    'string.max': 'La descripción no puede tener más de 2000 caracteres',
+  }),
+  status: Joi.string().valid('open', 'in_progress', 'resolved', 'closed').messages({
+    'any.only': 'El estado debe ser uno de: open, in_progress, resolved, closed',
+  }),
+  priority: Joi.string().valid('low', 'medium', 'high', 'urgent').messages({
+    'any.only': 'La prioridad debe ser una de: low, medium, high, urgent',
+  }),
+  assignedTo: Joi.string()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .allow(null, '')
+    .messages({
+      'string.pattern.base': 'assignedTo debe ser un ObjectId válido de MongoDB',
+    }),
+  tags: Joi.string()
+    .allow('')
+    .custom((value: string, helpers) => {
+      if (!value || value.trim() === '') {
+        return value;
+      }
+      const tagsArray = value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0);
+      if (tagsArray.length > 10) {
+        return helpers.error('string.max');
+      }
+      return value;
+    })
+    .messages({
+      'string.max': 'Se permiten máximo 10 etiquetas',
+    }),
+}).min(1).messages({
+  'object.min': 'Debe proporcionar al menos un campo para actualizar',
+});

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { signout } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { getAllTickets, getTicketById, createTicket } from '../services/ticketService';
+import { getAllTickets, getTicketById, createTicket, updateTicket } from '../services/ticketService';
 import type { ITicket } from '../services/ticketService';
 import TicketForm from '../components/TicketForm';
 import styles from './Tickets.module.css';
@@ -18,6 +18,7 @@ const Tickets = () => {
   const [filterId, setFilterId] = useState('');
   const [isFiltering, setIsFiltering] = useState(false);
   const [showTicketForm, setShowTicketForm] = useState(false);
+  const [editingTicket, setEditingTicket] = useState<ITicket | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
@@ -73,6 +74,14 @@ const Tickets = () => {
   };
 
   const handleCreateTicket = () => {
+    setEditingTicket(null);
+    setShowTicketForm(true);
+    setError(null);
+  };
+
+  // Función para editar ticket
+  const handleEditTicket = (ticket: ITicket) => {
+    setEditingTicket(ticket);
     setShowTicketForm(true);
     setError(null);
   };
@@ -96,23 +105,47 @@ const Tickets = () => {
             .filter((tag) => tag.length > 0)
         : [];
 
-      if (!user?.userId) {
-        setError('No se pudo obtener el ID del usuario');
-        return;
+      if (editingTicket) {
+        // Actualizar ticket existente
+        const updateData: any = {
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          priority: data.priority,
+        };
+
+        if (tagsArray.length > 0) {
+          updateData.tags = tagsArray;
+        } else {
+          updateData.tags = [];
+        }
+
+        // assignedTo siempre será null (no se permite asignar desde el formulario)
+        updateData.assignedTo = null;
+
+        await updateTicket(editingTicket._id, updateData);
+      } else {
+        // Crear nuevo ticket
+        if (!user?.userId) {
+          setError('No se pudo obtener el ID del usuario');
+          return;
+        }
+
+        const createData = {
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          priority: data.priority,
+          createdBy: user.userId,
+          assignedTo: null,
+          tags: tagsArray,
+        };
+
+        await createTicket(createData);
       }
 
-      const createData = {
-        title: data.title,
-        description: data.description,
-        status: data.status,
-        priority: data.priority,
-        createdBy: user.userId,
-        assignedTo: null,
-        tags: tagsArray,
-      };
-
-      await createTicket(createData);
       setShowTicketForm(false);
+      setEditingTicket(null);
       await loadTickets();
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.response?.data?.details?.join(', ') || 'Error al guardar el ticket';
@@ -124,6 +157,7 @@ const Tickets = () => {
 
   const handleCancelForm = () => {
     setShowTicketForm(false);
+    setEditingTicket(null);
     setError(null);
   };
 
@@ -176,7 +210,7 @@ const Tickets = () => {
             Hola {user?.email || 'Usuario'}
           </h2>
           <button onClick={handleLogout} className={styles.logoutButton}>
-            Cerrar SesiÃ³n
+            Cerrar Sesión
           </button>
         </div>
       </nav>
@@ -291,6 +325,15 @@ const Tickets = () => {
                       </div>
                     )}
                   </div>
+                  {/* Botón de Editar */}
+                  <div className={styles.ticketActions}>
+                    <button
+                      onClick={() => handleEditTicket(ticket)}
+                      className={styles.editButton}
+                    >
+                      Editar
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -301,7 +344,7 @@ const Tickets = () => {
       {/* Ticket Form Modal */}
       {showTicketForm && (
         <TicketForm
-          ticket={null}
+          ticket={editingTicket}
           onSubmit={handleFormSubmit}
           onCancel={handleCancelForm}
           loading={formLoading}
