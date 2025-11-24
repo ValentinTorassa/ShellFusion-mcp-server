@@ -1,0 +1,466 @@
+.ticketsContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-mid) 50%, var(--color-bg-gradient-end) 100%);
+  padding: 0;
+}
+
+.navbar {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-gradient-start) 100%);
+  border-bottom: 2px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbarContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbarGreeting {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.logoutButton {
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+}
+
+.logoutButton:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.logoutButton:active {
+  transform: translateY(0);
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.ticketsCard {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-gradient-start) 100%);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+  border: 2px solid var(--color-border);
+}
+
+.titleSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  flex: 1;
+}
+
+.addButton {
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+}
+
+.addButton:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.addButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.addButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.filterSection {
+  margin-bottom: 2rem;
+}
+
+.filterInputGroup {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filterInput {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  color: var(--color-text);
+  background-color: white;
+  transition: var(--transition);
+}
+
+.filterInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+.filterInput::placeholder {
+  color: #9ca3af;
+}
+
+.filterButton,
+.clearButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.filterButton {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.filterButton:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.filterButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clearButton {
+  background-color: #f3f4f6;
+  color: var(--color-primary);
+  border: 2px solid var(--color-border);
+}
+
+.clearButton:hover {
+  background-color: #e5e7eb;
+  border-color: var(--color-primary);
+}
+
+.errorMessage {
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.loadingMessage,
+.emptyMessage {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+}
+
+.ticketsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ticketCard {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.ticketCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.ticketActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  justify-content: flex-end;
+}
+
+.editButton,
+.deleteButton {
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.editButton {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.editButton:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.deleteButton {
+  background-color: var(--color-error);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.deleteButton:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.editButton:active,
+.deleteButton:active {
+  transform: translateY(0);
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ticketTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+
+.ticketMeta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.statusBadge,
+.priorityBadge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusBadge {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.statusopen {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.statusin_progress {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.statusresolved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.statusclosed {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.priorityBadge {
+  color: white;
+}
+
+.priorityLow {
+  background-color: #6b7280;
+}
+
+.priorityMedium {
+  background-color: #3b82f6;
+}
+
+.priorityHigh {
+  background-color: #f59e0b;
+}
+
+.priorityUrgent {
+  background-color: var(--color-error);
+}
+
+.ticketDescription {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.ticketFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.ticketInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.ticketInfoItem {
+  color: #6b7280;
+}
+
+.ticketInfoItem strong {
+  color: var(--color-primary);
+  margin-right: 0.5rem;
+}
+
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background-color: #f3f4f6;
+  color: var(--color-primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbarContent {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .navbarGreeting {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .logoutButton {
+    width: 100%;
+  }
+
+  .contentWrapper {
+    padding: 1rem;
+  }
+
+  .ticketsCard {
+    padding: 1.5rem;
+  }
+
+  .titleSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .addButton {
+    width: 100%;
+  }
+
+  .ticketActions {
+    flex-direction: column;
+  }
+
+  .editButton,
+  .deleteButton {
+    width: 100%;
+  }
+
+  .filterInputGroup {
+    flex-direction: column;
+  }
+
+  .filterInput,
+  .filterButton,
+  .clearButton {
+    width: 100%;
+  }
+
+  .ticketHeader {
+    flex-direction: column;
+  }
+
+  .ticketMeta {
+    width: 100%;
+  }
+}

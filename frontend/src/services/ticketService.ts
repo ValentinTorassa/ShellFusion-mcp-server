@@ -1,0 +1,88 @@
+import api from './api';
+
+export type ITicket = {
+  _id: string;
+  title: string;
+  description: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  assignedTo?: {
+    _id: string;
+    email: string;
+  } | null;
+  createdBy: {
+    _id: string;
+    email: string;
+  };
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+interface TicketsResponse {
+  success: boolean;
+  data: ITicket[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+interface TicketResponse {
+  success: boolean;
+  data: ITicket;
+}
+
+export const getAllTickets = async (): Promise<ITicket[]> => {
+  const response = await api.get<TicketsResponse>('/api/tickets');
+  return response.data.data;
+};
+
+export const getTicketById = async (id: string): Promise<ITicket> => {
+  const response = await api.get<TicketResponse>(`/api/tickets/${id}`);
+  return response.data.data;
+};
+
+//create ticket service
+
+interface CreateTicketData {
+  title: string;
+  description: string;
+  status?: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  assignedTo?: string | null;
+  tags?: string[];
+  createdBy: string;
+}
+
+//update ticket service
+interface UpdateTicketData {
+  title?: string;
+  description?: string;
+  status?: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  assignedTo?: string | null;
+  tags?: string[];
+}
+
+export const createTicket = async (data: CreateTicketData): Promise<ITicket> => {
+  const response = await api.post<TicketResponse>('/api/tickets', data);
+  return response.data.data;
+};
+
+export const updateTicket = async (id: string, data: UpdateTicketData): Promise<ITicket> => {
+  const response = await api.patch<TicketResponse>(`/api/tickets/${id}`, data);
+  return response.data.data;
+};
+
+interface DeleteTicketResponse {
+  success: boolean;
+  message: string;
+  data: ITicket;
+}
+
+export const deleteTicket = async (id: string): Promise<void> => {
+  await api.delete<DeleteTicketResponse>(`/api/tickets/${id}`);
+};
