@@ -1,13 +1,13 @@
 .ticketsContainer {
   min-height: 100vh;
-  background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #efe8d8 100%);
+  background: linear-gradient(135deg, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-mid) 50%, var(--color-bg-gradient-end) 100%);
   padding: 0;
 }
 
 .navbar {
-  background: linear-gradient(135deg, #ffffff 0%, #faf8f3 100%);
-  border-bottom: 2px solid #e8e3d5;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-gradient-start) 100%);
+  border-bottom: 2px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
   padding: 1rem 2rem;
   position: sticky;
   top: 0;
@@ -25,27 +25,27 @@
 .navbarGreeting {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e3a5f;
+  color: var(--color-primary);
   margin: 0;
 }
 
 .logoutButton {
-  background-color: #1e3a5f;
+  background-color: var(--color-primary);
   color: white;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
 }
 
 .logoutButton:hover {
-  background-color: #2d4a6f;
+  background-color: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-lg);
 }
 
 .logoutButton:active {
@@ -59,17 +59,17 @@
 }
 
 .ticketsCard {
-  background: linear-gradient(135deg, #ffffff 0%, #faf8f3 100%);
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-gradient-start) 100%);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
   padding: 2rem;
-  border: 2px solid #e8e3d5;
+  border: 2px solid var(--color-border);
 }
 
 .title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -88,17 +88,17 @@
   flex: 1;
   min-width: 200px;
   padding: 0.75rem 1rem;
-  border: 2px solid #e8e3d5;
-  border-radius: 0.5rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--color-text);
   background-color: white;
-  transition: all 0.2s;
+  transition: var(--transition);
 }
 
 .filterInput:focus {
   outline: none;
-  border-color: #1e3a5f;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
 }
 
@@ -109,24 +109,24 @@
 .filterButton,
 .clearButton {
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--transition);
   border: none;
 }
 
 .filterButton {
-  background-color: #1e3a5f;
+  background-color: var(--color-primary);
   color: white;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
 }
 
 .filterButton:hover:not(:disabled) {
-  background-color: #2d4a6f;
+  background-color: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-lg);
 }
 
 .filterButton:disabled {
@@ -136,21 +136,21 @@
 
 .clearButton {
   background-color: #f3f4f6;
-  color: #1e3a5f;
-  border: 2px solid #e8e3d5;
+  color: var(--color-primary);
+  border: 2px solid var(--color-border);
 }
 
 .clearButton:hover {
   background-color: #e5e7eb;
-  border-color: #1e3a5f;
+  border-color: var(--color-primary);
 }
 
 .errorMessage {
-  background-color: #fee2e2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
   text-align: center;
@@ -161,7 +161,7 @@
   text-align: center;
   padding: 3rem 1rem;
   font-size: 1.125rem;
-  color: #4b5563;
+  color: var(--color-text-secondary);
 }
 
 .ticketsList {
@@ -171,16 +171,16 @@
 }
 
 .ticketCard {
-  background: white;
-  border: 2px solid #e8e3d5;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
 }
 
 .ticketCard:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -196,7 +196,7 @@
 .ticketTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text);
   margin: 0;
   flex: 1;
   min-width: 200px;
@@ -259,11 +259,11 @@
 }
 
 .priorityUrgent {
-  background-color: #ef4444;
+  background-color: var(--color-error);
 }
 
 .ticketDescription {
-  color: #4b5563;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
@@ -273,7 +273,7 @@
   flex-direction: column;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e8e3d5;
+  border-top: 1px solid var(--color-border);
 }
 
 .ticketInfo {
@@ -288,7 +288,7 @@
 }
 
 .ticketInfoItem strong {
-  color: #1e3a5f;
+  color: var(--color-primary);
   margin-right: 0.5rem;
 }
 
@@ -300,12 +300,12 @@
 
 .tag {
   background-color: #f3f4f6;
-  color: #1e3a5f;
+  color: var(--color-primary);
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-  border: 1px solid #e8e3d5;
+  border: 1px solid var(--color-border);
 }
 
 @media (max-width: 768px) {

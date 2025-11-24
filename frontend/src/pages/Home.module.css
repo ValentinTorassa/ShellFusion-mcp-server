@@ -1,6 +1,6 @@
 .homeContainer {
   min-height: 100vh;
-  background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #efe8d8 100%);
+  background: linear-gradient(135deg, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-mid) 50%, var(--color-bg-gradient-end) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,21 +43,21 @@
 .title {
   font-size: 3.75rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
   margin-bottom: 0.5rem;
   margin-top: 0;
 }
 
 .subtitle {
   font-size: 1.25rem;
-  color: #4a5568;
+  color: var(--color-secondary);
   font-weight: 400;
 }
 
 .welcomeCard {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background: var(--color-bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
   padding: 3rem;
   margin-bottom: 2rem;
 }
@@ -65,13 +65,13 @@
 .welcomeTitle {
   font-size: 1.875rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text);
   margin-bottom: 1rem;
 }
 
 .welcomeText {
   font-size: 1.125rem;
-  color: #4b5563;
+  color: var(--color-text-secondary);
   margin-bottom: 2rem;
 }
 
@@ -91,44 +91,43 @@
 .button {
   font-weight: 600;
   padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
   text-decoration: none;
   display: inline-block;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
 }
 
 .button:hover {
   transform: scale(1.05);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-lg);
 }
 
 .buttonLogin {
-  background-color: #1e3a5f;
+  background-color: var(--color-primary);
   color: white;
 }
 
 .buttonLogin:hover {
-  background-color: #2d4a6f;
+  background-color: var(--color-primary-hover);
 }
 
 .buttonSignup {
-  background-color: #1e3a5f;
+  background-color: var(--color-primary);
   color: white;
 }
 
 .buttonSignup:hover {
-  background-color: #2d4a6f;
+  background-color: var(--color-primary-hover);
 }
 
 .claudeInfo {
-  background: white;
-  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-gradient-start) 100%);
+  border-radius: var(--border-radius-lg);
   padding: 2rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
   text-align: center;
-  border: 2px solid #e8e3d5;
-  background: linear-gradient(135deg, #ffffff 0%, #faf8f3 100%);
+  border: 2px solid var(--color-border);
 }
 
 .claudeIcon {
@@ -139,15 +138,14 @@
 .claudeTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text);
   margin-bottom: 0.75rem;
 }
 
 .claudeText {
   font-size: 1rem;
-  color: #4b5563;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   max-width: 600px;
   margin: 0 auto;
 }
-
