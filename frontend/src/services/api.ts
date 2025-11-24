@@ -12,13 +12,20 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor to add token to requests
+// Request interceptor to add token and API key to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Asegurar que la API key se agregue en cada request
+    const apiKey = import.meta.env.VITE_API_KEY;
+    if (apiKey) {
+      config.headers['x-api-key'] = apiKey;
+    }
+    
     return config;
   },
   (error) => {

@@ -1,57 +1,360 @@
 .ticketsContainer {
   min-height: 100vh;
+  background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #efe8d8 100%);
+  padding: 0;
+}
+
+.navbar {
+  background: linear-gradient(135deg, #ffffff 0%, #faf8f3 100%);
+  border-bottom: 2px solid #e8e3d5;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbarContent {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
 }
 
-.ticketsCard {
-  background: white;
-  border-radius: 16px;
-  padding: 60px 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  max-width: 500px;
-  width: 100%;
-}
-
-.title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.userInfo {
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 30px;
+.navbarGreeting {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin: 0;
 }
 
 .logoutButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #1e3a5f;
   color: white;
-  border: none;
-  padding: 12px 32px;
-  font-size: 1rem;
   font-weight: 600;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .logoutButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+  background-color: #2d4a6f;
+  transform: translateY(-1px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .logoutButton:active {
   transform: translateY(0);
 }
 
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.ticketsCard {
+  background: linear-gradient(135deg, #ffffff 0%, #faf8f3 100%);
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  border: 2px solid #e8e3d5;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.filterSection {
+  margin-bottom: 2rem;
+}
+
+.filterInputGroup {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filterInput {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e8e3d5;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: #1f2937;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.filterInput:focus {
+  outline: none;
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+.filterInput::placeholder {
+  color: #9ca3af;
+}
+
+.filterButton,
+.clearButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.filterButton {
+  background-color: #1e3a5f;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.filterButton:hover:not(:disabled) {
+  background-color: #2d4a6f;
+  transform: translateY(-1px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.filterButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clearButton {
+  background-color: #f3f4f6;
+  color: #1e3a5f;
+  border: 2px solid #e8e3d5;
+}
+
+.clearButton:hover {
+  background-color: #e5e7eb;
+  border-color: #1e3a5f;
+}
+
+.errorMessage {
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.loadingMessage,
+.emptyMessage {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.125rem;
+  color: #4b5563;
+}
+
+.ticketsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ticketCard {
+  background: white;
+  border: 2px solid #e8e3d5;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ticketCard:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ticketTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+
+.ticketMeta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.statusBadge,
+.priorityBadge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusBadge {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.statusopen {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.statusin_progress {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.statusresolved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.statusclosed {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.priorityBadge {
+  color: white;
+}
+
+.priorityLow {
+  background-color: #6b7280;
+}
+
+.priorityMedium {
+  background-color: #3b82f6;
+}
+
+.priorityHigh {
+  background-color: #f59e0b;
+}
+
+.priorityUrgent {
+  background-color: #ef4444;
+}
+
+.ticketDescription {
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.ticketFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e8e3d5;
+}
+
+.ticketInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.ticketInfoItem {
+  color: #6b7280;
+}
+
+.ticketInfoItem strong {
+  color: #1e3a5f;
+  margin-right: 0.5rem;
+}
+
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background-color: #f3f4f6;
+  color: #1e3a5f;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #e8e3d5;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbarContent {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .navbarGreeting {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .logoutButton {
+    width: 100%;
+  }
+
+  .contentWrapper {
+    padding: 1rem;
+  }
+
+  .ticketsCard {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .filterInputGroup {
+    flex-direction: column;
+  }
+
+  .filterInput,
+  .filterButton,
+  .clearButton {
+    width: 100%;
+  }
+
+  .ticketHeader {
+    flex-direction: column;
+  }
+
+  .ticketMeta {
+    width: 100%;
+  }
+}

@@ -72,6 +72,7 @@ npm install
 # Install frontend dependencies
 cd ../frontend
 npm install
+npm install @reduxjs/toolkit react-redux react-router-dom react-hook-form @hookform/resolvers joi axios jwt-decode
 ```
 
 ### 2. Start Database
