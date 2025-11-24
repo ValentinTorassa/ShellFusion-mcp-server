@@ -239,7 +239,7 @@ const Tickets = () => {
             Hola {user?.email || 'Usuario'}
           </h2>
           <button onClick={handleLogout} className={styles.logoutButton}>
-            Cerrar SesiÃ³n
+            Cerrar Sesión
           </button>
         </div>
       </nav>
@@ -389,8 +389,8 @@ const Tickets = () => {
       {deletingTicket && (
         <ConfirmModal
           isOpen={!!deletingTicket}
-          title="Confirmar EliminaciÃ³n"
-          message={`Â¿EstÃ¡ seguro de que desea eliminar el ticket "${deletingTicket.title}"? Esta acciÃ³n no se puede deshacer.`}
+          title="Confirmar Eliminación"
+          message={`¿Esta seguro de que desea eliminar el ticket "${deletingTicket.title}"? Esta acción no se puede deshacer.`}
           confirmText="Eliminar"
           cancelText="Cancelar"
           onConfirm={handleConfirmDelete}
