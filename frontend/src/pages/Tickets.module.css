@@ -66,12 +66,50 @@
   border: 2px solid var(--color-border);
 }
 
+.titleSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .title {
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: 2rem;
-  text-align: center;
+  margin: 0;
+  flex: 1;
+}
+
+.addButton {
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+}
+
+.addButton:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.addButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.addButton:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .filterSection {
@@ -182,6 +220,55 @@
 .ticketCard:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+}
+
+.ticketActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  justify-content: flex-end;
+}
+
+.editButton,
+.deleteButton {
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.editButton {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.editButton:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.deleteButton {
+  background-color: var(--color-error);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.deleteButton:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.editButton:active,
+.deleteButton:active {
+  transform: translateY(0);
 }
 
 .ticketHeader {
@@ -336,8 +423,27 @@
     padding: 1.5rem;
   }
 
+  .titleSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .title {
     font-size: 2rem;
+    text-align: center;
+  }
+
+  .addButton {
+    width: 100%;
+  }
+
+  .ticketActions {
+    flex-direction: column;
+  }
+
+  .editButton,
+  .deleteButton {
+    width: 100%;
   }
 
   .filterInputGroup {

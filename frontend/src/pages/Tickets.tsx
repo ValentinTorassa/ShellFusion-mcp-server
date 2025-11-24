@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { signout } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { getAllTickets, getTicketById } from '../services/ticketService';
+import { getAllTickets, getTicketById, createTicket } from '../services/ticketService';
 import type { ITicket } from '../services/ticketService';
+import TicketForm from '../components/TicketForm';
 import styles from './Tickets.module.css';
 
 const Tickets = () => {
@@ -16,6 +17,8 @@ const Tickets = () => {
   const [error, setError] = useState<string | null>(null);
   const [filterId, setFilterId] = useState('');
   const [isFiltering, setIsFiltering] = useState(false);
+  const [showTicketForm, setShowTicketForm] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
     loadTickets();
@@ -69,6 +72,61 @@ const Tickets = () => {
     navigate('/');
   };
 
+  const handleCreateTicket = () => {
+    setShowTicketForm(true);
+    setError(null);
+  };
+
+  const handleFormSubmit = async (data: {
+    title: string;
+    description: string;
+    status: 'open' | 'in_progress' | 'resolved' | 'closed';
+    priority: 'low' | 'medium' | 'high' | 'urgent';
+    assignedTo?: string;
+    tags?: string;
+  }) => {
+    try {
+      setFormLoading(true);
+      setError(null);
+
+      const tagsArray = data.tags
+        ? data.tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
+        : [];
+
+      if (!user?.userId) {
+        setError('No se pudo obtener el ID del usuario');
+        return;
+      }
+
+      const createData = {
+        title: data.title,
+        description: data.description,
+        status: data.status,
+        priority: data.priority,
+        createdBy: user.userId,
+        assignedTo: null,
+        tags: tagsArray,
+      };
+
+      await createTicket(createData);
+      setShowTicketForm(false);
+      await loadTickets();
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || err.response?.data?.details?.join(', ') || 'Error al guardar el ticket';
+      setError(errorMessage);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleCancelForm = () => {
+    setShowTicketForm(false);
+    setError(null);
+  };
+
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
       open: 'Abierto',
@@ -118,7 +176,7 @@ const Tickets = () => {
             Hola {user?.email || 'Usuario'}
           </h2>
           <button onClick={handleLogout} className={styles.logoutButton}>
-            Cerrar Sesión
+            Cerrar SesiÃ³n
           </button>
         </div>
       </nav>
@@ -126,7 +184,16 @@ const Tickets = () => {
       {/* Main Content */}
       <div className={styles.contentWrapper}>
         <div className={styles.ticketsCard}>
-          <h1 className={styles.title}>Tickets</h1>
+          <div className={styles.titleSection}>
+            <h1 className={styles.title}>Tickets</h1>
+            <button
+              onClick={handleCreateTicket}
+              className={styles.addButton}
+              disabled={loading}
+            >
+              + Nuevo Ticket
+            </button>
+          </div>
 
           {/* Filter Section */}
           <div className={styles.filterSection}>
@@ -201,9 +268,6 @@ const Tickets = () => {
                   <div className={styles.ticketFooter}>
                     <div className={styles.ticketInfo}>
                       <span className={styles.ticketInfoItem}>
-                        <strong>ID:</strong> {ticket._id}
-                      </span>
-                      <span className={styles.ticketInfoItem}>
                         <strong>Creado por:</strong> {ticket.createdBy?.email || 'N/A'}
                       </span>
                       {ticket.assignedTo && (
@@ -233,9 +297,18 @@ const Tickets = () => {
           )}
         </div>
       </div>
+
+      {/* Ticket Form Modal */}
+      {showTicketForm && (
+        <TicketForm
+          ticket={null}
+          onSubmit={handleFormSubmit}
+          onCancel={handleCancelForm}
+          loading={formLoading}
+        />
+      )}
     </div>
   );
 };
 
 export default Tickets;
-

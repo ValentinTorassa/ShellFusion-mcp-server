@@ -45,3 +45,16 @@ export const getTicketById = async (id: string): Promise<ITicket> => {
   return response.data.data;
 };
 
+interface CreateTicketData {
+  title: string;
+  description: string;
+  status?: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  assignedTo?: string | null;
+  tags?: string[];
+  createdBy: string;
+}
+export const createTicket = async (data: CreateTicketData): Promise<ITicket> => {
+  const response = await api.post<TicketResponse>('/api/tickets', data);
+  return response.data.data;
+};
