@@ -1,18 +1,22 @@
 import Joi from 'joi';
 
-// Esquemas sincronizados con el backend (backend/src/middlewares/validator.ts)
-// Usamos los mismos criterios de validación para consistencia
-
-// Schema base para email y password (igual al backend)
 const baseEmailSchema = Joi.string()
   .min(6)
   .max(60)
   .required()
-  .email({ tlds: { allow: ['com', 'net'] } });
+  .email({ tlds: { allow: ['com', 'net'] } })
+  .messages({
+    'string.empty': 'El email no puede estar vacío',
+    'any.required': 'El email es requerido',
+  });
 
 const basePasswordSchema = Joi.string()
   .required()
-  .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'));
+  .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'))
+  .messages({
+    'string.empty': 'La contraseña no puede estar vacía',
+    'any.required': 'La contraseña es requerida',
+  });
 
 export const signupSchema = Joi.object({
   email: baseEmailSchema.messages({
@@ -29,6 +33,7 @@ export const signupSchema = Joi.object({
     .required()
     .valid(Joi.ref('password'))
     .messages({
+      'string.empty': 'La confirmación de contraseña no puede estar vacía',
       'any.only': 'Las contraseñas no coinciden',
       'any.required': 'La confirmación de contraseña es requerida',
     }),
@@ -47,14 +52,15 @@ export const signinSchema = Joi.object({
   }),
 });
 
-// Esquemas de validación para tickets (sincronizados con el backend)
 const baseTicketFields = {
   title: Joi.string().min(3).max(200).required().messages({
+    'string.empty': 'El título no puede estar vacío',
     'string.min': 'El título debe tener al menos 3 caracteres',
     'string.max': 'El título no puede tener más de 200 caracteres',
     'any.required': 'El título es requerido',
   }),
   description: Joi.string().min(10).max(2000).required().messages({
+    'string.empty': 'La descripción no puede estar vacía',
     'string.min': 'La descripción debe tener al menos 10 caracteres',
     'string.max': 'La descripción no puede tener más de 2000 caracteres',
     'any.required': 'La descripción es requerida',
@@ -92,13 +98,14 @@ export const createTicketSchema = Joi.object({
   ...baseTicketFields,
 });
 
-//Validación para actualizar un ticket
 export const updateTicketSchema = Joi.object({
   title: Joi.string().min(3).max(200).messages({
+    'string.empty': 'El título no puede estar vacío',
     'string.min': 'El título debe tener al menos 3 caracteres',
     'string.max': 'El título no puede tener más de 200 caracteres',
   }),
   description: Joi.string().min(10).max(2000).messages({
+    'string.empty': 'La descripción no puede estar vacía',
     'string.min': 'La descripción debe tener al menos 10 caracteres',
     'string.max': 'La descripción no puede tener más de 2000 caracteres',
   }),

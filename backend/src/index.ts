@@ -14,7 +14,6 @@ const PORT = process.env.PORT || 4000;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/users_login';
 
-// Conectar a MongoDB
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully');
@@ -31,19 +30,23 @@ app.use(cors({
 app.use(morgan('combined'));
 app.use(express.json());
 
-// Health check endpoint (no API key)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Rutas de autenticación (públicas, no requieren API key)
 app.use('/api/auth', authRouter);
-
-// Aplicar API key auth solo a las rutas que lo requieren
 app.use('/api', apiKeyAuth);
-
-// Rutas que requieren API key
 app.use('/api', ticketsRouter);
+app.use((req, res) => {
+  if (req.path.startsWith('/api')) {
+    res.status(404).json({
+      success: false,
+      message: 'Ruta de API no encontrada',
+    });
+  } else {
+    res.status(404).send('Not found');
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
