@@ -6,13 +6,13 @@ import Home from './pages/Home';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import Tickets from './pages/Tickets';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // Initialize auth state from localStorage on app load
     dispatch(initializeAuth());
   }, [dispatch]);
 
@@ -30,6 +30,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

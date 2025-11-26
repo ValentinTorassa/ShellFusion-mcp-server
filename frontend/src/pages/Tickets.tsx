@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { signout } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { getAllTickets, getTicketById, createTicket, updateTicket, deleteTicket } from '../services/ticketService';
+import { getAllTickets, createTicket, updateTicket, deleteTicket } from '../services/ticketService';
 import type { ITicket } from '../services/ticketService';
 import TicketForm from '../components/TicketForm';
 import ConfirmModal from '../components/ConfirmModal.tsx'; 
@@ -16,7 +16,7 @@ const Tickets = () => {
   const [filteredTickets, setFilteredTickets] = useState<ITicket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterId, setFilterId] = useState('');
+  const [filterTitle, setFilterTitle] = useState('');
   const [isFiltering, setIsFiltering] = useState(false);
   const [showTicketForm, setShowTicketForm] = useState(false);
   const [editingTicket, setEditingTicket] = useState<ITicket | null>(null);
@@ -43,28 +43,31 @@ const Tickets = () => {
     }
   };
 
-  const handleFilterById = async () => {
-    if (!filterId.trim()) {
+  const handleFilterByTitle = () => {
+    if (!filterTitle.trim()) {
       setFilteredTickets(tickets);
       setIsFiltering(false);
       return;
     }
 
-    try {
-      setIsFiltering(true);
-      setError(null);
-      const ticket = await getTicketById(filterId.trim());
-      setFilteredTickets([ticket]);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Ticket no encontrado');
-      setFilteredTickets([]);
-    } finally {
-      setIsFiltering(false);
+    setIsFiltering(true);
+    setError(null);
+
+    const searchTerm = filterTitle.trim().toLowerCase();
+    const filtered = tickets.filter(ticket =>
+      ticket.title.toLowerCase().includes(searchTerm)
+    );
+
+    if (filtered.length === 0) {
+      setError('No se encontraron tickets con ese título');
     }
+
+    setFilteredTickets(filtered);
+    setIsFiltering(false);
   };
 
   const handleClearFilter = () => {
-    setFilterId('');
+    setFilterTitle('');
     setFilteredTickets(tickets);
     setIsFiltering(false);
     setError(null);
@@ -263,24 +266,24 @@ const Tickets = () => {
             <div className={styles.filterInputGroup}>
               <input
                 type="text"
-                placeholder="Buscar por ID de ticket..."
-                value={filterId}
-                onChange={(e) => setFilterId(e.target.value)}
+                placeholder="Buscar por título..."
+                value={filterTitle}
+                onChange={(e) => setFilterTitle(e.target.value)}
                 className={styles.filterInput}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
-                    handleFilterById();
+                    handleFilterByTitle();
                   }
                 }}
               />
               <button
-                onClick={handleFilterById}
+                onClick={handleFilterByTitle}
                 className={styles.filterButton}
                 disabled={isFiltering}
               >
                 {isFiltering ? 'Buscando...' : 'Buscar'}
               </button>
-              {filterId && (
+              {filterTitle && (
                 <button
                   onClick={handleClearFilter}
                   className={styles.clearButton}

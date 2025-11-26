@@ -5,32 +5,32 @@ import mongoose from "mongoose";
  
 const router = Router();
  
-// CREATE POST
-// POST /api/tickets - Crear un nuevo ticket
+// CREATE
+// POST /api/tickets - Create a new ticket
 router.post("/tickets", async (req: Request, res: Response): Promise<any> => {
   try {
-    // Validar datos con Joi
+    // Validate data with Joi
     const { error, value } = createTicketSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
         success: false,
-        message: "Validation failed",
+        message: "Error de validación",
         details: error.details.map((detail) => detail.message),
       });
     }
  
-    // Obtener el ID del usuario que crea el ticket (desde el token JWT si está autenticado)
-    // Por ahora, asumimos que viene en el body o lo obtenemos de otra forma
+    // Get user ID who creates the ticket (from JWT token if authenticated)
+    // For now, we assume it comes in the body or we get it from elsewhere
     const createdBy = req.body.createdBy || req.body.userId;
  
     if (!createdBy || !mongoose.Types.ObjectId.isValid(createdBy)) {
       return res.status(400).json({
         success: false,
-        message: "Valid createdBy (userId) is required",
+        message: "Se requiere un ID de usuario válido",
       });
     }
  
-    // Crear el ticket
+    // Create the ticket
     const newTicket = new Ticket({
       title: value.title,
       description: value.description,
@@ -43,7 +43,7 @@ router.post("/tickets", async (req: Request, res: Response): Promise<any> => {
  
     const savedTicket = await newTicket.save();
  
-    // Populate para obtener información del usuario
+    // Populate to get user information
     await savedTicket.populate("createdBy", "email");
     if (savedTicket.assignedTo) {
       await savedTicket.populate("assignedTo", "email");
@@ -51,21 +51,21 @@ router.post("/tickets", async (req: Request, res: Response): Promise<any> => {
  
     res.status(201).json({
       success: true,
-      message: "Ticket created successfully",
+      message: "Ticket creado exitosamente",
       data: savedTicket,
     });
   } catch (err: any) {
     console.error("Error creating ticket:", err);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Error interno del servidor",
       error: err.message,
     });
   }
 });
 
-// READ ALL (GET)
-// GET /api/tickets - Obtener todos los tickets con filtros opcionales
+// READ ALL
+// GET /api/tickets - Get all tickets with optional filters
 router.get("/tickets", async (req: Request, res: Response): Promise<any> => {
   try {
     const {
@@ -79,7 +79,7 @@ router.get("/tickets", async (req: Request, res: Response): Promise<any> => {
       sortOrder = "desc",
     } = req.query;
  
-    // Construir filtros
+    // Build filters
     const filter: any = {};
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
@@ -94,16 +94,16 @@ router.get("/tickets", async (req: Request, res: Response): Promise<any> => {
       }
     }
  
-    // Paginación
+    // Pagination
     const pageNum = parseInt(page as string, 10);
     const limitNum = parseInt(limit as string, 10);
     const skip = (pageNum - 1) * limitNum;
  
-    // Ordenamiento
+    // Sorting
     const sort: any = {};
     sort[sortBy as string] = sortOrder === "asc" ? 1 : -1;
  
-    // Ejecutar consulta
+    // Execute query
     const tickets = await Ticket.find(filter)
       .populate("createdBy", "email")
       .populate("assignedTo", "email")
@@ -127,14 +127,12 @@ router.get("/tickets", async (req: Request, res: Response): Promise<any> => {
     console.error("Error fetching tickets:", err);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Error interno del servidor",
       error: err.message,
     });
   }
 });
 
- // READ ONE (GET)
-// GET /api/tickets/:id - Obtener un ticket por ID
 router.get("/tickets/:id", async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
@@ -142,7 +140,7 @@ router.get("/tickets/:id", async (req: Request, res: Response): Promise<any> => 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid ticket ID format",
+        message: "Formato de ID de ticket inválido",
       });
     }
  
@@ -153,7 +151,7 @@ router.get("/tickets/:id", async (req: Request, res: Response): Promise<any> => 
     if (!ticket) {
       return res.status(404).json({
         success: false,
-        message: "Ticket not found",
+        message: "Ticket no encontrado",
       });
     }
  
@@ -165,14 +163,14 @@ router.get("/tickets/:id", async (req: Request, res: Response): Promise<any> => 
     console.error("Error fetching ticket:", err);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Error interno del servidor",
       error: err.message,
     });
   }
 });
 
-// UPDATE (PATCH)
-// PATCH /api/tickets/:id - Actualizar un ticket
+// UPDATE
+// PATCH /api/tickets/:id - Update a ticket
 router.patch("/tickets/:id", async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
@@ -180,21 +178,21 @@ router.patch("/tickets/:id", async (req: Request, res: Response): Promise<any> =
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid ticket ID format",
+        message: "Formato de ID de ticket inválido",
       });
     }
  
-    // Validar datos con Joi
+    // Validate data with Joi
     const { error, value } = updateTicketSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
         success: false,
-        message: "Validation failed",
+        message: "Error de validación",
         details: error.details.map((detail) => detail.message),
       });
     }
  
-    // Preparar datos para actualizar
+    // Prepare data for update
     const updateData: any = {};
     if (value.title !== undefined) updateData.title = value.title;
     if (value.description !== undefined) updateData.description = value.description;
@@ -210,12 +208,12 @@ router.patch("/tickets/:id", async (req: Request, res: Response): Promise<any> =
       } else {
         return res.status(400).json({
           success: false,
-          message: "Invalid assignedTo format",
+          message: "Formato de assignedTo inválido",
         });
       }
     }
  
-    // Actualizar el ticket
+    // Update the ticket
     const updatedTicket = await Ticket.findByIdAndUpdate(
       id,
       { $set: updateData },
@@ -227,27 +225,25 @@ router.patch("/tickets/:id", async (req: Request, res: Response): Promise<any> =
     if (!updatedTicket) {
       return res.status(404).json({
         success: false,
-        message: "Ticket not found",
+        message: "Ticket no encontrado",
       });
     }
  
     res.status(200).json({
       success: true,
-      message: "Ticket updated successfully",
+      message: "Ticket actualizado exitosamente",
       data: updatedTicket,
     });
   } catch (err: any) {
     console.error("Error updating ticket:", err);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Error interno del servidor",
       error: err.message,
     });
   }
 });
 
-// DELETE (DELETE)
-// DELETE /api/tickets/:id - Eliminar un ticket
 router.delete("/tickets/:id", async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
@@ -255,7 +251,7 @@ router.delete("/tickets/:id", async (req: Request, res: Response): Promise<any> 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid ticket ID format",
+        message: "Formato de ID de ticket inválido",
       });
     }
  
@@ -264,20 +260,20 @@ router.delete("/tickets/:id", async (req: Request, res: Response): Promise<any> 
     if (!deletedTicket) {
       return res.status(404).json({
         success: false,
-        message: "Ticket not found",
+        message: "Ticket no encontrado",
       });
     }
  
     res.status(200).json({
       success: true,
-      message: "Ticket deleted successfully",
+      message: "Ticket eliminado exitosamente",
       data: deletedTicket,
     });
   } catch (err: any) {
     console.error("Error deleting ticket:", err);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Error interno del servidor",
       error: err.message,
     });
   }

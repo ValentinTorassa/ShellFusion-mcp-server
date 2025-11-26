@@ -1,57 +1,79 @@
-import Joi from "joi"; //librería de validación de datos para Node.js
+import Joi from "joi";
 
-// Schema para registro y login, valido mail y contraseña
 export const signSchema = Joi.object({
   email: Joi.string()
     .min(6)
     .max(60)
     .required()
-    .email({ tlds: { allow: ["com", "net"] } }),
+    .email({ tlds: { allow: ["com", "net"] } })
+    .messages({
+      'string.empty': 'El email no puede estar vacío',
+      'string.min': 'El email debe tener al menos 6 caracteres',
+      'string.max': 'El email no puede tener más de 60 caracteres',
+      'string.email': 'Debe ser un email válido',
+      'any.required': 'El email es requerido',
+    }),
   password: Joi.string()
     .required()
-    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")),
+    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
+    .messages({
+      'string.empty': 'La contraseña no puede estar vacía',
+      'string.pattern.base': 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número',
+      'any.required': 'La contraseña es requerida',
+    }),
 });
 
-// Schema para cambiar contraseña, valido nueva contraseña y antigua contraseña
 export const changePasswordSchema = Joi.object({
   newPassword: Joi.string()
     .required()
-    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")),
+    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
+    .messages({
+      'string.empty': 'La nueva contraseña no puede estar vacía',
+      'string.pattern.base': 'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número',
+      'any.required': 'La nueva contraseña es requerida',
+    }),
   oldPassword: Joi.string()
     .required()
-    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")),
+    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
+    .messages({
+      'string.empty': 'La contraseña actual no puede estar vacía',
+      'string.pattern.base': 'La contraseña actual debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número',
+      'any.required': 'La contraseña actual es requerida',
+    }),
 });
 
 const baseTicketFields = {
   title: Joi.string().min(3).max(200).messages({
-    "string.min": "Title must have at least 3 characters",
-    "string.max": "Title must not exceed 200 characters",
+    "string.empty": "El título no puede estar vacío",
+    "string.min": "El título debe tener al menos 3 caracteres",
+    "string.max": "El título no debe exceder 200 caracteres",
   }),
   description: Joi.string().min(10).max(2000).messages({
-    "string.min": "Description must have at least 10 characters",
-    "string.max": "Description must not exceed 2000 characters",
+    "string.empty": "La descripción no puede estar vacía",
+    "string.min": "La descripción debe tener al menos 10 caracteres",
+    "string.max": "La descripción no debe exceder 2000 caracteres",
   }),
   status: Joi.string()
     .valid("open", "in_progress", "resolved", "closed")
     .messages({
-      "any.only": "Status must be one of: open, in_progress, resolved, closed",
+      "any.only": "El estado debe ser uno de: open, in_progress, resolved, closed",
     }),
   priority: Joi.string()
     .valid("low", "medium", "high", "urgent")
     .messages({
-      "any.only": "Priority must be one of: low, medium, high, urgent",
+      "any.only": "La prioridad debe ser una de: low, medium, high, urgent",
     }),
   assignedTo: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/)
     .allow(null, "")
     .messages({
-      "string.pattern.base": "assignedTo must be a valid MongoDB ObjectId",
+      "string.pattern.base": "assignedTo debe ser un ObjectId válido de MongoDB",
     }),
   tags: Joi.array()
     .items(Joi.string().trim())
     .max(10)
     .messages({
-      "array.max": "Maximum 10 tags allowed",
+      "array.max": "Máximo 10 etiquetas permitidas",
     }),
 };
 
@@ -61,13 +83,13 @@ export const createTicketSchema = Joi.object({
     .pattern(/^[0-9a-fA-F]{24}$/)
     .required()
     .messages({
-      "string.pattern.base": "createdBy must be a valid MongoDB ObjectId",
-      "any.required": "createdBy is required",
+      "string.pattern.base": "createdBy debe ser un ObjectId válido de MongoDB",
+      "any.required": "createdBy es requerido",
     }),
 });
 
 export const updateTicketSchema = Joi.object({
   ...baseTicketFields,
 }).min(1).messages({
-  "object.min": "At least one field must be provided for update",
+  "object.min": "Se debe proporcionar al menos un campo para actualizar",
 });
